@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CU Walk-In Scenario Generator</title>
+  <meta name="description" content="Generate realistic CU walk-in scenarios with objections for life insurance role-play training.">
+  <style>
+    :root{--bg:#0f1222;--panel:#171a2e;--ink:#e8e9f1;--muted:#aab;--shadow:0 10px 30px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.02);--radius:16px;}
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(1200px 800px at 10% -10%,#1b1e36 0%,#0f1222 50%,#0b0e1a 100%);color:var(--ink);font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial}
+    header{max-width:1100px;margin:28px auto 10px;padding:0 18px}
+    h1{font-size:clamp(24px,3vw,34px);margin:0 0 8px 0}
+    .sub{color:var(--muted)}
+    .panel{max-width:1100px;margin:18px auto;padding:18px;border-radius:var(--radius);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02));box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.06)}
+    .btn{cursor:pointer;display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:linear-gradient(180deg,#1a2344,#121a35);color:var(--ink);box-shadow:var(--shadow);}
+    .card{position:relative;background:var(--panel);border-radius:var(--radius);padding:16px;border:1px solid rgba(255,255,255,.08);box-shadow:var(--shadow)}
+    .list{margin:8px 0 0 0;padding-left:18px}
+    footer{max-width:1100px;margin:12px auto 40px;padding:0 18px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Credit Union Walk-In Scenario Generator</h1>
+    <div class="sub">Generate one detailed, unique member role‑play prompt for life insurance conversations.</div>
+  </header>
+
+  <section class="panel">
+    <label><input id="incFinancial" type="checkbox" checked> Include financial hint</label>
+    <label><input id="incTone" type="checkbox" checked> Include personality tone</label>
+    <label><input id="incTips" type="checkbox"> Include coaching prompts</label>
+    <div style="margin-top:12px">
+      <button class="btn" id="generateBtn">⚡ Generate Scenario</button>
+      <button class="btn" id="copyBtn">📋 Copy</button>
+      <button class="btn" id="printBtn">🖨️ Print</button>
+    </div>
+  </section>
+
+  <section class="panel" aria-live="polite">
+    <div id="card"></div>
+  </section>
+
+  <footer>Tip: Use the Copy button to paste into your training notes.</footer>
+
+<script>
+(function(){
+  const firstNames=["Aisha","Marcus","Lena","Diego","Priya","Omar","Hannah","Jamal","Sofia","Noah","Maya","Ethan","Riley","Chen","Zoe","Luis","Emma","Kai","Yara","Jonah","Nina","Carlos","Grace","Tariq","Mei","Santiago","Layla","Gabe","Rosa","Andre","Mikhail","Ivy","Sam","Ramon","Amira","Quinn","Ariel","Jay","Carmen","Declan"];
+  const lastNames=["Nguyen","Johnson","Rivera","Patel","O'Connell","Garcia","Okafor","Hernandez","Khan","Silva","Carpenter","Kim","Sato","Williams","Ali","Baker","Hughes","Santos","Diaz","Lopez","Chang","Parker","Singh","Brown","Martin","Young","Fischer","Rodriguez","Miller","Murphy","Cohen","Rahman","Correia","Bautista","Stewart","Sharma","Lam"];
+  const occupations=["mechanic","construction worker","plumber","HVAC technician","truck driver","electrician","welder","factory worker","janitor","custodian","auto body technician","forklift operator","painter","landscaper","delivery driver","maintenance technician","carpenter","line cook","warehouse associate","security guard","groundskeeper","machinist","roofer","bus driver","gas station attendant","tire technician","assembler","meat cutter","heavy equipment operator","pest control technician","nurse","medical assistant","hospital security guard","janitorial staff at hospital","lab technician","radiology tech","dietary aide","patient transporter","ER technician","maintenance worker at hospital","billing clerk","front desk receptionist","medical records clerk"];
+  const childNames=["Liam","Emma","Noah","Olivia","Ava","Ethan","Isabella","Sophia","Jackson","Mia","Lucas","Amelia","Carter","Charlotte","Elijah","Harper","Logan","Aria","Grayson","Ella"];
+  const reasons=["opening a checking account","asking about auto loan rates","making a loan payment","rolling over a CD","adding a joint member","replacing a lost debit card","inquiring about a personal loan","asking about mortgage options","setting up direct deposit","shared branching cash withdrawal"];
+  const seG=["local school district staff","regional hospital employees","city public works","manufacturing plant","grocery co‑op","university staff","transit authority","small tech startup","county offices","fire department admin"];
+  const tones=["friendly","in a rush","skeptical","quiet","chatty","numbers‑driven","anxious about money","decisive","indecisive","distracted"];
+  const marriageStatuses=["single","dating","engaged","married","widowed","divorced"];
+  const lifeStages=["recently graduated college","starting first full‑time job","buying a first home","new parent","caring for aging parents","empty nester","approaching retirement","recently relocated","recovering from job loss"];
+  const financialHints=["auto loan opened 8 months ago","credit card balance carried month‑to‑month","savings under $1,000","paid off car last month","new mortgage within 6 months","irregular gig income","steady salary with 401(k) match","recent medical bills","student loans in repayment","CD maturing next quarter"];
+  const objections=[
+    {cat:"Coverage at work", text:"I’m covered through my job already."},
+    {cat:"Price", text:"It’s too expensive right now."},
+    {cat:"Need", text:"I’m healthy and don’t really need it."},
+    {cat:"Delay", text:"Let me think about it and get back to you."},
+    {cat:"Decision maker", text:"My spouse/partner handles this."},
+    {cat:"Already covered", text:"I already have a small policy from years ago."},
+    {cat:"Trust", text:"I’m not sure I trust insurance companies."},
+    {cat:"Eligibility", text:"I probably won’t qualify because of my health."},
+    {cat:"Age", text:"I’m too young to worry about that."},
+    {cat:"Hassle", text:"I don’t want a medical exam or paperwork."},
+    {cat:"Budget timing", text:"Money’s tight until after payday."},
+    {cat:"Priority", text:"Let’s talk after I finish with this loan first."}
+  ];
+
+  const r = (arr) => arr[Math.floor(Math.random()*arr.length)];
+  const randInt = (min,max)=> Math.floor(Math.random()*(max-min+1))+min;
+  function fullName(){ return `${r(firstNames)} ${r(lastNames)}`; }
+
+  function randomKids(){
+    const numKids = randInt(0,3);
+    const kids = [];
+    for(let i=0;i<numKids;i++){ kids.push({name:r(childNames), age:randInt(1,17)}); }
+    return kids;
+  }
+  function randomSpouse(){ return {name: fullName(), age: randInt(20,74)}; }
+
+  function buildScenario(){
+    const marriageStatus = r(marriageStatuses);
+    const spouse = (marriageStatus === 'married' || marriageStatus === 'engaged') ? randomSpouse() : null;
+    const smoker = Math.random() < 0.25 ? 'Yes' : 'No';
+    return {
+      name: fullName(),
+      age: randInt(19,74),
+      occupation: r(occupations),
+      memberType: r(seG),
+      visit: r(reasons),
+      tone: r(tones),
+      marriageStatus,
+      spouse,
+      smoker,
+      lifeStage: r(lifeStages),
+      kids: randomKids(),
+      financial: r(financialHints),
+      objections: [r(objections), r(objections)]
+    };
+  }
+
+  function renderScenario(s){
+    const div = document.getElementById('card');
+    const spouseText = s.spouse ? ` • <strong>Partner:</strong> ${s.spouse.name} (${s.spouse.age} years old)` : '';
+    div.innerHTML = `<div class="card">
+      <h3>${s.name} (${s.age})</h3>
+      <p><strong>Occupation:</strong> ${s.occupation}</p>
+      <p><strong>Smoker:</strong> ${s.smoker}</p>
+      <p><strong>Marital Status:</strong> ${s.marriageStatus}${spouseText} • <strong>Children:</strong> ${s.kids.length} ${s.kids.length>0?`(${s.kids.map(k=>`${k.name} (${k.age} years old)`).join(', ')})`:''}</p>
+      <p><strong>Life Stage:</strong> ${s.lifeStage}</p>
+      <p><strong>Reason for Visit:</strong> ${s.visit}</p>
+      ${document.getElementById('incTone').checked?`<p><strong>Personality:</strong> ${s.tone}</p>`:''}
+      ${document.getElementById('incFinancial').checked?`<p><strong>Financial hint:</strong> ${s.financial}</p>`:''}
+      <div><strong>Objections:</strong><ul class="list">${s.objections.map(o=>`<li>${o.cat}: ${o.text}</li>`).join('')}</ul></div>
+      ${document.getElementById('incTips').checked?`<p><strong>Coaching Tip:</strong> Validate the objection, ask permission to explore, and connect benefits to their reason for visiting.</p>`:''}
+    </div>`;
+  }
+
+  document.getElementById('generateBtn').addEventListener('click', ()=>{
+    const s = buildScenario();
+    renderScenario(s);
+  });
+  document.getElementById('copyBtn').addEventListener('click', ()=>{
+    const text = document.getElementById('card').innerText;
+    navigator.clipboard.writeText(text);
+  });
+  document.getElementById('printBtn').addEventListener('click', ()=>window.print());
+
+  document.getElementById('generateBtn').click();
+})();
+</script>
+</body>
+</html>
